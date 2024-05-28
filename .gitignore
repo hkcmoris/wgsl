@@ -1,0 +1,26 @@
+# Ignore build artifacts
+build/
+dist/
+.cache/
+
+# Ignore dependencies
+node_modules/
+
+# Ignore compiled shaders
+*.hlslc
+
+# Ignore generated JavaScript files
+*.js
+
+# Ignore minified JavaScript files
+*.min.js
+
+# Ignore sourcemap files
+*.map
+
+# Ignore temporary files
+*.tmp
+
+# Ignore IDE-specific files
+.vscode/
+.idea/
