@@ -9,9 +9,6 @@ node_modules/
 # Ignore compiled shaders
 *.hlslc
 
-# Ignore generated JavaScript files
-*.js
-
 # Ignore minified JavaScript files
 *.min.js
 
