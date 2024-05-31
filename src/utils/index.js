@@ -34,6 +34,7 @@ export class DG_Plane {
         this.segments = segments;
         this.geometry = new THREE.BufferGeometry();
         this.vertices = new Float32Array((segments.x + 1) * (segments.y + 1) * 3);
+        this.normals = new Float32Array((segments.x + 1) * (segments.y + 1) * 3);
         this.indices = [/*segments.x * segments.y * 6*/];
         this.uv0 = new Float32Array((segments.x + 1) * (segments.y + 1) * 2);
         this.uv1 = new Float32Array((segments.x + 1) * (segments.y + 1) * 2);
@@ -48,7 +49,8 @@ export class DG_Plane {
 
         this.geometry.setIndex(this.indices);
         this.geometry.setAttribute('position', new THREE.BufferAttribute(this.vertices, 3, false));
-        this.geometry.setAttribute('uv', new THREE.BufferAttribute(this.uv1, 2, false));
+        this.geometry.setAttribute('normal', new THREE.BufferAttribute(this.normals, 3, false));
+        this.geometry.setAttribute('uv', new THREE.BufferAttribute(this.uv0, 2, false));
         console.log('DG_Plane generated');
     }
 
@@ -68,7 +70,11 @@ export class DG_Plane {
                 this.vertices[index * 3 + 1] = this.position.y - this.origin.y;
                 this.vertices[index * 3 + 2] = this.position.z + this.origin.z - this.chunk.y * y;
     
-                console.log(`v(${index},${this.segments.x},${this.segments.y}) = [${this.vertices[index * 3]},${this.vertices[index * 3 + 1]},${this.vertices[index * 3 + 2]}]`);
+                this.normals[index * 3] = 0;
+                this.normals[index * 3 + 1] = 1;
+                this.normals[index * 3 + 2] = 0;
+
+                //console.log(`v(${index},${this.segments.x},${this.segments.y}) = [${this.vertices[index * 3]},${this.vertices[index * 3 + 1]},${this.vertices[index * 3 + 2]}]`);
 
                 const u = x / this.segments.x; // 0-1
                 const v = y / this.segments.y; // 0-1
@@ -87,7 +93,7 @@ export class DG_Plane {
     
                 this.indices.push(...quadIndicesCCW(index, this.segments.x, this.segments.y));
     
-                console.log(`i(${index},${this.segments.x},${this.segments.y}) = [${quadIndicesCCW(index, this.segments.x, this.segments.y).join(',')}]`);
+                //console.log(`i(${index},${this.segments.x},${this.segments.y}) = [${quadIndicesCCW(index, this.segments.x, this.segments.y).join(',')}]`);
             }
         }
     }

@@ -4,22 +4,23 @@ import Stats from 'three/addons/libs/stats.module.js';
 import WebGL from 'three/addons/capabilities/WebGL.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
-import vs from './shaders/raw.vert';
-import fs from './shaders/raw.frag';
+import vs from './shaders/raw1.vert';
+import fs from './shaders/raw1.frag';
+import hm from './textures/map.png';
 
 import * as utils from './utils';
 
 
 // Set up the camera
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-
-camera.position.set(0, 10, 10);
+camera.position.set(0, 16, 20);
 camera.lookAt(0, 0, 0);
 
 // Set up the scene
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x000000);
 
+// Set up the axis helper
 var axisHelper = new THREE.AxesHelper(50);
 scene.add(axisHelper);
 
@@ -33,36 +34,32 @@ const stats = new Stats();
 container.appendChild(stats.dom);
 
 // Set up the geometry
-//const geometry = utils.generatePlaneGeometry(new THREE.Vector3(0, 0, 0), 4, 4, 5, 5);
-
-const scale = new THREE.Vector2(20, 20);
+const scale = new THREE.Vector2(16, 16);
 const dgPlane = new utils.DG_Plane(
     new THREE.Vector3(0, 0, 0),
     new THREE.Vector3(scale.x / 2, 0, scale.y / 2),
     scale,
-    new THREE.Vector2(100, 100)
+    new THREE.Vector2(1024, 1024)
 );
 const geometry = dgPlane.geometry;
-//const wireframe = dgPlane.generateWireframe();
+geometry.dynamic = true;
 
-// This is the shader material
+// This is the uniforms
 const uniforms = { 
     iTime: { value: 0.0 },
     iTimeDelta: { value: 0.0 },
-    iResolution: { value: new THREE.Vector3(window.innerWidth, window.innerHeight, 1) }
+    iResolution: { value: new THREE.Vector3(window.innerWidth, window.innerHeight, 1) },
+    uvScale: { value: new THREE.Vector2(1, 1) },
+    iChannel0: { type: 't', value: new THREE.TextureLoader().load(hm) }
 } 
 
-//first a couple of place holders
-const MY_VERTEX_SHADER = vs;
-const MY_FRAGMENT_SHADER = fs;
-//the wrapper
+// This is the shader material
 const myMeshBasicMaterial = new THREE.RawShaderMaterial({
     uniforms: uniforms,
-    vertexShader: MY_VERTEX_SHADER,
-    fragmentShader: MY_FRAGMENT_SHADER,
+    vertexShader: vs,
+    fragmentShader: fs,
     glslVersion: THREE.GLSL3
 })
-
 
 const plane = new THREE.Mesh(geometry, myMeshBasicMaterial);
 scene.add(plane);
@@ -89,7 +86,7 @@ function animate() {
     stats.update();
     //plane.position.x += 0.01;
 
-    //plane.rotation.y += 0.01;
+    plane.rotation.y += 0.005;
 
     renderer.render(scene, camera);
 }
@@ -101,5 +98,3 @@ if (WebGL.isWebGLAvailable()) {
     const warning = WebGL.getWebGLErrorMessage();
     document.getElementById('container').appendChild(warning);
 }
-
-animate();

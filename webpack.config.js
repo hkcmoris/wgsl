@@ -30,7 +30,11 @@ module.exports = {
       {
         test: /\.(vert|frag|wgsl)$/i,
         use: 'raw-loader',
-      }      
+      },
+      {
+        test: /\.(png|svg|jpe?g|gif)$/i,
+        type: 'asset/resource',
+      },
     ]
   }
 };
