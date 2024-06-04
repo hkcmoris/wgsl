@@ -2,7 +2,13 @@ import * as THREE from 'three';
 
 // Exported functions, variables, or classes go here
 
-function quadIndicesCCW(i, w, h) {
+/**
+ * Returns the vertices of a quad in counter-clockwise order.
+ * @param {} i The index.
+ * @param w The number of segments in the x-axis.
+ * @returns 
+ */
+function quadIndicesCCW(i, w) {
     let b = Math.floor(i / w) + i;
     return [
         b,
@@ -14,7 +20,13 @@ function quadIndicesCCW(i, w, h) {
     ]
 }
 
-function quadIndicesCW(i, w, h) {
+/**
+ * Returns the indices of a quad in clockwise order.
+ * @param i The index.
+ * @param w The number of segments in the x-axis.
+ * @returns 
+ */
+function quadIndicesCW(i, w) {
     let b = Math.floor(i / w) + i;
     return [
         b,
@@ -26,7 +38,18 @@ function quadIndicesCW(i, w, h) {
     ]
 }
 
+/**
+ * Custom plane geometry class.
+ */
 export class DG_Plane {
+    
+    /**
+     * Custom plane geometry class.
+     * @param position The position of the plane.
+     * @param origin The origin of the plane.
+     * @param scale The scale of the plane.
+     * @param segments The number of segments of the plane.
+     */
     constructor(position, origin, scale, segments) {
         this.position = position;
         this.origin = origin;
