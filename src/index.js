@@ -1,5 +1,9 @@
-import './styles/main.css';
-import App from './utils/app';
+import "./styles/main.css";
 
-const app = new App(true, true);
-app.start();
+import startApp from "./app.js";
+import { initEngine } from "./render/init.js";
+
+(async () => {
+    await initEngine();
+    startApp();
+})();

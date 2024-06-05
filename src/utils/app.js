@@ -1,15 +1,21 @@
+/**
+ * DONT USE THIS FILE
+ * DEPRECATED
+ * USE THE NEW VERSION IN THE ROOT DIRECTORY
+ */
 import * as THREE from "three";
 import Stats from "three/addons/libs/stats.module.js";
 import WebGL from "three/addons/capabilities/WebGL.js";
 import { SDFGeometryGenerator } from "three/addons/geometries/SDFGeometryGenerator.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
+import { EffectComposer, Pass } from "three/examples/jsm/postprocessing/EffectComposer.js";
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
 
 import vs from ".././shaders/raw1.vert";
 import fs from ".././shaders/raw1.frag";
 import hm from ".././textures/map.png";
 
-import { DG_Plane } from ".";
+import { DG_Plane } from "./utils";
 
 class App {
     constructor(antialias = true, axisHelper = false) {
@@ -34,7 +40,12 @@ class App {
         this.renderer.shadowMap.enabled = true;
         document.body.appendChild(this.renderer.domElement);
 
-        this.composer = new EffectComposer(this.renderer);
+        this.renderTarget = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight, {
+            samples: 8,
+        });
+        this.composer = new EffectComposer(this.renderer, this.renderTarget);
+        this.composer.setSize(window.innerWidth, window.innerHeight)
+        this.composer.setPixelRatio(renderer.getPixelRatio())
 
         // Set up the axis helper
         if (this.useAxisHelper) {
@@ -55,6 +66,9 @@ class App {
         this.camera = new THREE.PerspectiveCamera(75, this.aspect, 0.1, 1000);
         this.camera.position.set(0, 16, 20);
         this.camera.lookAt(0, 0, 0);
+
+        const renderPass = new RenderPass(this.scene, this.camera)
+        this.composer.addPass(renderPass)
 
         // Set up the controls
         this.controls = new OrbitControls(
@@ -139,7 +153,7 @@ class App {
         // this.uniforms.iTimeDelta.value = delta;
 
         this.stats.update();
-        this.renderer.render(this.scene, this.camera);
+        this.composer.render(this.scene, this.camera);
     }
 
     #loadDefaultScene() {
